@@ -43,6 +43,7 @@ enemy_pos = [random.randint(0, WIDTH - enemy_size), 0]
 # Enemy positions and speeds
 enemies = []
 enemy_speeds = []
+num_enemies = 1  # Default to 2 enemies
 
 for i in range(2):  # Create two enemies
     enemies.append([random.randint(0, WIDTH - enemy_size), 0])
@@ -59,26 +60,51 @@ clock = pygame.time.Clock()
 
 #----------------Funtions--------------------------
 def show_start_screen():
-    global current_screen, button_clicked
-    screen.fill(color_dark)
-    font = pygame.font.Font(None, 36)
+    global current_screen, num_enemies
 
-    # Dibuja el botón "Start"
+    # Button to start the game
+    start_button_rect = pygame.Rect(WIDTH // 2 - 75, 200, 150, 50)
     pygame.draw.rect(screen, color_blue, start_button_rect)
+    font = pygame.font.Font(None, 36)
     text = font.render("Start", True, color_white)
     text_rect = text.get_rect()
     text_rect.center = start_button_rect.center
     screen.blit(text, text_rect)
-    
-    # Verifica si se hizo clic en el botón
-    if not button_clicked:
-        if start_button_rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(screen, color_white, start_button_rect, 2)
-            if pygame.mouse.get_pressed()[0]:  # Si se hizo clic
-                button_clicked = True
-        else:
-            pygame.draw.rect(screen, color_blue, start_button_rect, 2)
 
+    # Check if the home button was clicked
+    if start_button_rect.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, color_white, start_button_rect, 2)
+        if pygame.mouse.get_pressed()[0] and current_screen == START_SCREEN:
+            current_screen = GAME_SCREEN
+
+    # Buttons to select the number of enemies
+    btn1enemy = pygame.Rect(WIDTH // 4 - 50, HEIGHT // 2 + 50, 130, 50)
+    btn2enemy = pygame.Rect(3 * WIDTH // 4 - 50, HEIGHT // 2 + 50, 130, 50)
+
+    pygame.draw.rect(screen, color_blue, btn1enemy)
+    pygame.draw.rect(screen, color_blue, btn2enemy)
+
+    font = pygame.font.Font(None, 36)
+    text1 = font.render("1 Enemy", True, color_white)
+    text2 = font.render("2 Enemies", True, color_white)
+
+    text_rect1 = text1.get_rect()
+    text_rect2 = text2.get_rect()
+
+    text_rect1.center = btn1enemy.center
+    text_rect2.center = btn2enemy.center
+
+    screen.blit(text1, text_rect1)
+    screen.blit(text2, text_rect2)
+
+    if btn1enemy.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, color_white, btn1enemy, 2)
+        if pygame.mouse.get_pressed()[0] and current_screen == START_SCREEN:
+            num_enemies = 1
+    elif btn2enemy.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, color_white, btn2enemy, 2)
+        if pygame.mouse.get_pressed()[0] and current_screen == START_SCREEN:
+            num_enemies = 2
 
     pygame.display.update()
 
@@ -140,23 +166,19 @@ while not game_over:
 
     # We restart the screen to create a motion effect
         screen.fill(color_dark)
-        for i in range(len(enemies)):
+        for i in range(num_enemies):
             if enemies[i][1] >= 0 and enemies[i][1] < HEIGHT:
                 enemies[i][1] += enemy_speeds[i]
             else:
                 enemies[i] = [random.randint(0, WIDTH - enemy_size), 0]
-                enemy_speeds[i] = random.randint(10, 30)
+                enemy_speeds[i] = random.randint(2, 5)
             pygame.draw.rect(screen, color_red, (enemies[i][0], enemies[i][1], enemy_size, enemy_size))
             if detect_collision(player_pos, enemies[i]):
                 game_over = True
 
-        # We draw our player
-        pygame.draw.rect(screen, color_blue,
-                        (player_pos[0], player_pos[1], player_size, player_size))
-
-        # We draw our enemy
-        #pygame.draw.rect(screen, color_red,
-         #               (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
+        pygame.draw.rect(screen, color_blue, (player_pos[0], player_pos[1], player_size, player_size))
+        clock.tick(30)
+        pygame.display.update()
 
 
         # We limit the Fhz
