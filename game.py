@@ -48,7 +48,7 @@ num_enemies = 1  # Default to 2 enemies
 for i in range(2):  # Create two enemies
     enemies.append([random.randint(0, WIDTH - enemy_size), 0])
     #We start the first slow lap
-    enemy_speeds.append(random.randint(10, 20))
+    enemy_speeds.append(random.randint(20, 45))
 
 # ---------------Game screen---------------------
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -171,7 +171,7 @@ while not game_over:
                 enemies[i][1] += enemy_speeds[i]
             else:
                 enemies[i] = [random.randint(0, WIDTH - enemy_size), 0]
-                enemy_speeds[i] = random.randint(2, 5)
+                enemy_speeds[i] = random.randint(20, 45)
             pygame.draw.rect(screen, color_red, (enemies[i][0], enemies[i][1], enemy_size, enemy_size))
             if detect_collision(player_pos, enemies[i]):
                 game_over = True
