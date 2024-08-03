@@ -2,7 +2,7 @@ import sys
 import pygame
 import random
 
-# Initialize Pygame
+# Inicializar el juego
 pygame.init()
 
 # --------------- General content-----------------------
